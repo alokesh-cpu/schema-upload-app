@@ -1,26 +1,13 @@
-import React from 'react';
-import logo from './logo.svg';
+import React  from 'react';
 import './App.css';
+import FileUpload from './components/FileUpload';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+const App = () => (
+    <div className="container mt-4">
+      <h2 className="display-4 text-center mb-4">Upload New Schema</h2>
+      <FileUpload/>
     </div>
   );
-}
+
 
 export default App;
