@@ -31,11 +31,11 @@ const FileUpload = () => {
   const onSubmit = async e =>{
       e.preventDefault();
 
-      console.log("Name: " + name);
-      console.log("Version: " + version);
-      console.log("Group: " + group);
-      console.log("Artifact: " + artifact);
-      console.log("Namespace: " + namespace);
+    //   console.log("Name: " + name);
+    //   console.log("Version: " + version);
+    //   console.log("Group: " + group);
+    //   console.log("Artifact: " + artifact);
+    //   console.log("Namespace: " + namespace);
      
       const jsonDataObj = {
         "name": name,
@@ -47,11 +47,11 @@ const FileUpload = () => {
       console.log(JSON.stringify(jsonDataObj));
       const formData = new FormData();
       formData.append('schemaJson' , JSON.stringify(jsonDataObj));
-      formData.append('file',file);
+      formData.append('jsonFile',file);
       formData.append('xsdFile', xsdFile);
     
       try {
-          const res = await axios.post('/upload', formData, {
+          const res = await axios.post('/schemas', formData, {
               headers: {
                   'Content-Type' : 'multipart/form-data',
                   "Accept": "application/json",
@@ -60,9 +60,10 @@ const FileUpload = () => {
 
           });
 
-          const {fileName , filePath , xsdFileName, xsdFilePath} = res.data;
-          setUploadedFile({fileName, filePath});
-          setUploadedXsdFile({xsdFileName,xsdFilePath});
+         // const {fileName , filePath , xsdFileName, xsdFilePath} = res.data;
+          const {code , message , jsonFileName, jsonFilePath,xsdFileName, xsdFilePath } = res.data;
+          setUploadedFile({jsonFileName,jsonFilePath, xsdFileName,xsdFilePath});
+          //setUploadedXsdFile({xsdFileName,xsdFilePath});
           setMessage('File uploaded sucessfully');
       } catch (err) {
           if(err.response.status === 500){
@@ -77,54 +78,77 @@ const FileUpload = () => {
 
   return (
     <Fragment>
-        {message? <Message msg={message} />: null}
-        <form onSubmit={onSubmit}>
-            <div className="form-row">
-                <div className="form-group col-md-8">
-                    <label htmlFor="name">Name</label>
-                    <input type="text" className="form-control" value={name} onChange={(e) => setName(e.target.value)} placeholder="Transportation Enriched Agreement"/>
-                </div>
-                <div className="form-group col-md-4">
-                    <label htmlFor="version">Version</label>
-                    <input type="text" className="form-control" value={version} onChange={(e) => setVersion(e.target.value)} placeholder="1.0"/>
-                </div>
-            </div>
-            <div className="form-group">
-                <label htmlFor="namespace">Namespace</label>
-                <input type="text" className="form-control" value={namespace} onChange={(e) => setNamespace(e.target.value)} placeholder="com.allstate.pmp.transportation.insurance.enrichedmodels"/>
-            </div>
-            <div className="form-row">
-                <div className="form-group col-md-6">
-                    <label htmlFor="group">Group</label>
-                    <input type="text" className="form-control" value={group} onChange={(e) => setGroup(e.target.value)}  placeholder="com.allstate.pmp.transportation"/>
-                </div>
-                <div className="form-group col-md-6">
-                    <label htmlFor="artifact">Artifact</label>
-                    <input type="text" className="form-control" value={artifact} onChange={(e) => setArtifact(e.target.value)} placeholder="transportation.insurance.enrichedmodels"/>
-                </div>
-            </div>
-            <div className="custom-file mb-4">
-                <input type="file" className="custom-file-input" id="customFile1" onChange={onChange}/>
-                <label className="custom-file-label" htmlFor="customFile">{filename}</label>
-            </div>
+        <div className="wrapper">
+            <div className="form-wrapper">
+            <h4>Upload New Schema</h4>
+                    <form onSubmit={onSubmit}>
+                   
+                        <div className="name">
+                            <label htmlFor="name">Name</label>
+                            <input type="text" className="form-control" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name"/>
+                        </div>
+                        <div className="version">
+                            <label htmlFor="version">Version</label>
+                            <input type="text" className="form-control" value={version} onChange={(e) => setVersion(e.target.value)} placeholder="Version"/>
+                        </div>
+                  
+                    
+                        <div className="namespace">
+                            <label htmlFor="namespace">Namespace</label>
+                            <input type="text" className="form-control" value={namespace} onChange={(e) => setNamespace(e.target.value)} placeholder="Namespace"/>
+                        </div>
+                    
+                    
+                        <div className="version">
+                            <label htmlFor="group">Group</label>
+                            <input type="text" className="form-control" value={group} onChange={(e) => setGroup(e.target.value)}  placeholder="Group name"/>
+                        </div>
+                        <div className="artifact">
+                            <label htmlFor="artifact">Artifact</label>
+                            <input type="text" className="form-control" value={artifact} onChange={(e) => setArtifact(e.target.value)} placeholder="Artifact"/>
+                        </div>
+                    
+                    <div className="custom-file mb-2 ">
+                        <input type="file" className="custom-file-input" id="customFile1" onChange={onChange}/>
+                        <label className="custom-file-label" htmlFor="customFile">{filename}</label>
+                    </div>
 
-            <div className="custom-file mb-4">
-                <input type="file" className="custom-file-input" id="customFile2" onChange={onChange2}/>
-                <label className="custom-file-label" htmlFor="customFile">{xsdFilename}</label>
-            </div>
+                    <div className="custom-file mb-2 ">
+                        <input type="file" className="custom-file-input" id="customFile2" onChange={onChange2}/>
+                        <label className="custom-file-label" htmlFor="customFile">{xsdFilename}</label>
+                    </div>
 
-            <input type="submit" value="Upload" className="btn btn-primary btn-block mt-4" />
-        </form>
-        {
-            uploadedFile? <div className="row mt-5">
-                <div className="col-md-6 m-auto">
-                    <h3 className="text-left">{uploadedFile.filePath}</h3>
-                </div>
-                <div className="col-md-6 m-auto">
-                    <h3 className="text-left">{uploadedXsdFile.xsdFilePath}</h3>
-                </div>
-            </div>: null
-        }
+                    <input type="submit" value="Upload" className="button" />
+                </form>
+            </div>
+            {message? <Message msg={message} />: null}
+            {
+            /**
+             * uploadedFile? <div >
+                    <div className="row mt-5">
+                        <div className="col-md-6 m-auto">
+                            <h5 className="text-left">{uploadedFile.jsonFileName}</h5>  
+                        </div>
+                        <div className="col-md-6 m-auto">
+                            <h5 className="text-left">{uploadedFile.jsonFilePath}</h5>
+                        </div>
+                    </div>
+                    <div className="row mt-5">
+                        <div className="col-md-6 m-auto">
+                            <h5 className="text-left">{uploadedFile.xsdFileName}</h5>  
+                        </div>
+                        <div className="col-md-6 m-auto">
+                            <h5 className="text-left">{uploadedFile.xsdFilePath}</h5>
+                        </div>
+                    </div>
+                </div>: null
+            
+             * 
+             */
+            }
+                
+        </div>
+        
     </Fragment>
     
   )
